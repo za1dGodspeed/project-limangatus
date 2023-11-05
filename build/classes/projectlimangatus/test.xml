@@ -1,0 +1,24 @@
+<?xml version="1.0"?><!-- iReport connections -->
+<iReportConnectionSet>
+	<iReportConnection name="Empty datasource" connectionClass="com.jaspersoft.ireport.designer.connection.JREmptyDatasourceConnection">
+		<connectionParameter name="records"><![CDATA[1]]></connectionParameter>
+	</iReportConnection>
+	<iReportConnection name="Koneksi" connectionClass="com.jaspersoft.ireport.designer.connection.JDBCConnection">
+		<connectionParameter name="Username"><![CDATA[postgres]]></connectionParameter>
+		<connectionParameter name="SavePassword"><![CDATA[false]]></connectionParameter>
+		<connectionParameter name="Database"><![CDATA[]]></connectionParameter>
+		<connectionParameter name="ServerAddress"><![CDATA[]]></connectionParameter>
+		<connectionParameter name="JDBCDriver"><![CDATA[org.postgresql.Driver]]></connectionParameter>
+		<connectionParameter name="Url"><![CDATA[jdbc:postgresql://localhost:5432/DBL_A_M4_09010622015]]></connectionParameter>
+		<connectionParameter name="Password"><![CDATA[]]></connectionParameter>
+	</iReportConnection>
+	<iReportConnection name="ConnectLimangatus" connectionClass="com.jaspersoft.ireport.designer.connection.JDBCConnection">
+		<connectionParameter name="Username"><![CDATA[postgres]]></connectionParameter>
+		<connectionParameter name="SavePassword"><![CDATA[false]]></connectionParameter>
+		<connectionParameter name="Database"><![CDATA[]]></connectionParameter>
+		<connectionParameter name="ServerAddress"><![CDATA[]]></connectionParameter>
+		<connectionParameter name="JDBCDriver"><![CDATA[org.postgresql.Driver]]></connectionParameter>
+		<connectionParameter name="Url"><![CDATA[jdbc:postgresql://localhost:5432/limangatusDB]]></connectionParameter>
+		<connectionParameter name="Password"><![CDATA[]]></connectionParameter>
+	</iReportConnection>
+</iReportConnectionSet>
