@@ -31,13 +31,13 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">Tentang Proyek</a>
+      <a href="#tentang-proyek">Tentang Proyek</a>
       <ul>
-        <li><a href="#built-with">Dibuat menggunakan</a></li>
+        <li><a href="#dibuat-menggunakan">Dibuat menggunakan</a></li>
       </ul>
     </li>
     <li>
-      <a href="#about-the-project">Kontak</a>
+      <a href="#kontak">Kontak</a>
     </li>
   </ol>
 </details>
