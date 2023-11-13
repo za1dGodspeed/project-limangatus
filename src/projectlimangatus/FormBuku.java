@@ -4,6 +4,7 @@
  */
 package projectlimangatus;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -16,7 +17,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.AbstractQuery;
@@ -31,18 +31,20 @@ import org.apache.commons.csv.CSVRecord;
  *
  * @author THINKPAD
  */
-public class CRUDGUILimangatus extends javax.swing.JFrame {
+public class FormBuku extends javax.swing.JFrame {
 
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjectLimangatusPU");
     EntityManager em = emf.createEntityManager();
     Connection konz = em.unwrap(java.sql.Connection.class);
+    
 
     /**
      * Creates new form GUISederhana
      */
-    public CRUDGUILimangatus() {
+    public FormBuku() {
         initComponents();
         tampilanTabel();
+//        setSize(Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     /**
@@ -71,20 +73,18 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
         jButtonReport = new javax.swing.JButton();
         jButtonUploadCSV = new javax.swing.JButton();
         jLabelNamaFile = new javax.swing.JLabel();
+        jTextFieldCari = new javax.swing.JTextField();
+        jComboBoxCari = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setUndecorated(true);
 
         jLabelKodeProdi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelKodeProdi.setText("ISBN");
 
         jLabelNamaProdi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelNamaProdi.setText("Judul Buku");
-
-        jTextFieldJudulBuku.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldJudulBukuActionPerformed(evt);
-            }
-        });
 
         jButtonSimpan.setText("Simpan");
         jButtonSimpan.addActionListener(new java.awt.event.ActionListener() {
@@ -132,24 +132,18 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(0).setHeaderValue("ISBN");
+            jTable2.getColumnModel().getColumn(1).setHeaderValue("Judul Buku");
+            jTable2.getColumnModel().getColumn(2).setHeaderValue("Tahun Terbit");
+            jTable2.getColumnModel().getColumn(3).setHeaderValue("Penerbit");
+        }
 
         jLabelJenjang.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelJenjang.setText("Tahun Terbit");
 
-        jTextFieldTahunTerbit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldTahunTerbitActionPerformed(evt);
-            }
-        });
-
         jLabelNamaKaprodi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelNamaKaprodi.setText("Penerbit");
-
-        jTextFieldNamaPenerbit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldNamaPenerbitActionPerformed(evt);
-            }
-        });
 
         jLabelJudul.setFont(new java.awt.Font("Consolas", 1, 36)); // NOI18N
         jLabelJudul.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -173,6 +167,18 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
 
         jLabelNamaFile.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         jLabelNamaFile.setText("File not found...");
+
+        jTextFieldCari.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jTextFieldCari.setToolTipText("");
+        jTextFieldCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldCariKeyReleased(evt);
+            }
+        });
+
+        jComboBoxCari.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ISBN", "Judul Buku", "Tahun Terbit", "Penerbit" }));
+        jComboBoxCari.setKeySelectionManager(null);
+        jComboBoxCari.setName(""); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -206,24 +212,31 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
                                     .addComponent(jButtonReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jButtonUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextFieldCari, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBoxCari, 0, 1, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabelJudul, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(50, 50, 50))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(62, 62, 62)
+                .addContainerGap(50, Short.MAX_VALUE)
                 .addComponent(jLabelJudul, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelKodeProdi)
+                    .addComponent(jTextFieldISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabelKodeProdi)
-                            .addComponent(jTextFieldISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabelNamaProdi)
                             .addComponent(jTextFieldJudulBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -247,18 +260,14 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonUploadCSV)
                             .addComponent(jLabelNamaFile))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 163, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE))
-                .addContainerGap())
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextFieldJudulBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldJudulBukuActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldJudulBukuActionPerformed
 
     private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
         // TODO add your handling code here:
@@ -273,14 +282,6 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
         kosongkanTextField();
         JOptionPane.showMessageDialog(null, "Perbaruan Data Berhasil");
     }//GEN-LAST:event_jButtonUpdateActionPerformed
-
-    private void jTextFieldTahunTerbitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldTahunTerbitActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldTahunTerbitActionPerformed
-
-    private void jTextFieldNamaPenerbitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldNamaPenerbitActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldNamaPenerbitActionPerformed
 
     private void jButtonHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHapusActionPerformed
         // TODO add your handling code here:
@@ -380,11 +381,37 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonUploadCSVActionPerformed
 
+    private void jTextFieldCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldCariKeyReleased
+        // TODO add your handling code here:
+        String[] valueModel = {"isbn", "judulBuku", "tahunTerbit", "penerbit"};
+
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        model.setRowCount(0);
+
+        em.getTransaction().begin();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        AbstractQuery<Buku> cq = cb.createQuery(Buku.class);
+
+        Root<Buku> buku = cq.from(Buku.class);
+
+        cq.where(cb.like(buku.get(valueModel[jComboBoxCari.getSelectedIndex()]), "%" + jTextFieldCari.getText() + "%"));
+        CriteriaQuery<Buku> select = ((CriteriaQuery<Buku>) cq).select(buku);
+        TypedQuery<Buku> q = em.createQuery(select);
+        List<Buku> list = q.getResultList();
+
+        for (Buku b : list) {
+            model.addRow(new Object[]{b.getIsbn(), b.getJudulBuku(), b.getTahunTerbit(), b.getPenerbit()});
+        }
+
+        em.getTransaction().commit();
+
+    }//GEN-LAST:event_jTextFieldCariKeyReleased
+
     private void tampilanTabel() {
         // membuat tampilan model tabel
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         model.setRowCount(0);
-        
+
         em.getTransaction().begin();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Buku> cq = cb.createQuery(Buku.class);
@@ -429,14 +456,18 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CRUDGUILimangatus.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormBuku.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CRUDGUILimangatus.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormBuku.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CRUDGUILimangatus.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormBuku.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CRUDGUILimangatus.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FormBuku.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -445,7 +476,7 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CRUDGUILimangatus().setVisible(true);
+                new FormBuku().setVisible(true);
             }
         });
     }
@@ -456,6 +487,7 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSimpan;
     private javax.swing.JButton jButtonUpdate;
     private javax.swing.JButton jButtonUploadCSV;
+    private javax.swing.JComboBox<String> jComboBoxCari;
     private javax.swing.JLabel jLabelJenjang;
     private javax.swing.JLabel jLabelJudul;
     private javax.swing.JLabel jLabelKodeProdi;
@@ -464,6 +496,7 @@ public class CRUDGUILimangatus extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelNamaProdi;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTextField jTextFieldCari;
     private javax.swing.JTextField jTextFieldISBN;
     private javax.swing.JTextField jTextFieldJudulBuku;
     private javax.swing.JTextField jTextFieldNamaPenerbit;
