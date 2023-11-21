@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.persistence.EntityManager;
@@ -17,13 +19,26 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
 import java.sql.Connection;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.AbstractQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.swing.JFileChooser;
+import javax.swing.JTable;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
@@ -36,7 +51,6 @@ public class FormBuku extends javax.swing.JFrame {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjectLimangatusPU");
     EntityManager em = emf.createEntityManager();
     Connection konz = em.unwrap(java.sql.Connection.class);
-    
 
     /**
      * Creates new form GUISederhana
@@ -75,6 +89,7 @@ public class FormBuku extends javax.swing.JFrame {
         jLabelNamaFile = new javax.swing.JLabel();
         jTextFieldCari = new javax.swing.JTextField();
         jComboBoxCari = new javax.swing.JComboBox<>();
+        jButtonQueryReport = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -132,12 +147,6 @@ public class FormBuku extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setHeaderValue("ISBN");
-            jTable2.getColumnModel().getColumn(1).setHeaderValue("Judul Buku");
-            jTable2.getColumnModel().getColumn(2).setHeaderValue("Tahun Terbit");
-            jTable2.getColumnModel().getColumn(3).setHeaderValue("Penerbit");
-        }
 
         jLabelJenjang.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelJenjang.setText("Tahun Terbit");
@@ -180,6 +189,13 @@ public class FormBuku extends javax.swing.JFrame {
         jComboBoxCari.setKeySelectionManager(null);
         jComboBoxCari.setName(""); // NOI18N
 
+        jButtonQueryReport.setText("Query Report");
+        jButtonQueryReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonQueryReportActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -194,33 +210,35 @@ public class FormBuku extends javax.swing.JFrame {
                             .addComponent(jLabelJenjang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabelNamaKaprodi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(17, 17, 17)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextFieldISBN)
-                            .addComponent(jTextFieldJudulBuku)
-                            .addComponent(jTextFieldTahunTerbit)
-                            .addComponent(jTextFieldNamaPenerbit)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabelNamaFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonUploadCSV))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButtonSimpan)
-                                    .addComponent(jButtonHapus))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButtonReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButtonUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jTextFieldISBN)
+                                .addComponent(jTextFieldJudulBuku)
+                                .addComponent(jTextFieldTahunTerbit)
+                                .addComponent(jTextFieldNamaPenerbit)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(jLabelNamaFile)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jButtonUploadCSV))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jButtonSimpan)
+                                        .addComponent(jButtonHapus))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jButtonReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButtonUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButtonQueryReport))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jTextFieldCari, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jComboBoxCari, 0, 1, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabelJudul, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)))
+                        .addComponent(jLabelJudul, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(50, 50, 50))
         );
         layout.setVerticalGroup(
@@ -260,7 +278,9 @@ public class FormBuku extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonUploadCSV)
                             .addComponent(jLabelNamaFile))
-                        .addGap(0, 163, Short.MAX_VALUE))
+                        .addGap(69, 69, 69)
+                        .addComponent(jButtonQueryReport)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE))
                 .addContainerGap(50, Short.MAX_VALUE))
         );
@@ -393,8 +413,8 @@ public class FormBuku extends javax.swing.JFrame {
         AbstractQuery<Buku> cq = cb.createQuery(Buku.class);
 
         Root<Buku> buku = cq.from(Buku.class);
-
-        cq.where(cb.like(buku.get(valueModel[jComboBoxCari.getSelectedIndex()]), "%" + jTextFieldCari.getText() + "%"));
+        cq.where(cb.like(cb.upper(buku.get(valueModel[jComboBoxCari.getSelectedIndex()])), "%" + jTextFieldCari.getText().toUpperCase() + "%"));
+//        cq.where(cb.equal(buku.get(valueModel[jComboBoxCari.getSelectedIndex()]), jTextFieldCari.getText()));
         CriteriaQuery<Buku> select = ((CriteriaQuery<Buku>) cq).select(buku);
         TypedQuery<Buku> q = em.createQuery(select);
         List<Buku> list = q.getResultList();
@@ -406,6 +426,123 @@ public class FormBuku extends javax.swing.JFrame {
         em.getTransaction().commit();
 
     }//GEN-LAST:event_jTextFieldCariKeyReleased
+
+    private void jButtonQueryReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQueryReportActionPerformed
+        // TODO add your handling code here:
+//        try {
+//            String reportPath = "src/projectlimangatus/test.jrxml";
+//            String searchTerm = jTextFieldCari.getText().trim();
+//
+//            // Building the JPA query dynamically based on the selected criteria
+//            String queryString = "SELECT b FROM Buku b WHERE ";
+//
+//            switch (jComboBoxCari.getSelectedIndex()) {
+//                case 0:
+//                    queryString += "LOWER(b.isbn) LIKE LOWER(:searchTerm)";
+//                    break;
+//                case 1:
+//                    queryString += "LOWER(b.judulBuku) LIKE LOWER(:searchTerm)";
+//                    break;
+//                case 2:
+//                    queryString += "LOWER(b.tahunTerbit) LIKE LOWER(:searchTerm)";
+//                    break;
+//                case 3:
+//                    queryString += "LOWER(b.penerbit) LIKE LOWER(:searchTerm)";
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("Invalid search criteria selected.");
+//            }
+//
+//            EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjectLimangatusPU");
+//            EntityManager em = emf.createEntityManager();
+//            em.getTransaction().begin();
+//
+//            CriteriaBuilder cb = em.getCriteriaBuilder();
+//            CriteriaQuery<Buku> cq = cb.createQuery(Buku.class);
+//            Root<Buku> bok = cq.from(Buku.class);
+//            cq.select(bok);
+//
+//            // Check if WHERE clause is not empty
+//            if (queryString.endsWith(" WHERE ")) {
+//                throw new IllegalArgumentException("No search criteria selected.");
+//            }
+//
+//            TypedQuery<Buku> q = em.createQuery(cq);
+//            List<Buku> list = q.getResultList();
+//            Query query = em.createQuery(queryString);
+//            query.setParameter("searchTerm", "%" + searchTerm + "%");
+//
+//            List<Buku> results = query.getResultList();
+//
+//            // Menyiapkan data untuk laporan
+//            List<Object[]> data = new ArrayList<>();
+//            for (Buku result : results) {
+//                Object[] rowData = {
+//                    result.getIsbn(),
+//                    result.getJudulBuku(),
+//                    result.getTahunTerbit(),
+//                    result.getPenerbit(),};
+//                data.add(rowData);
+//            }
+//            em.getTransaction().commit();
+//            em.close();
+//            emf.close();
+//
+//            // Membuat sumber data untuk JasperReports dari data hasil pencarian
+//            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(results);
+//
+//            // Memuat file desain laporan (*.jrxml)
+//            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+//            JasperPrint print = JasperFillManager.fillReport(jasperReport, null, dataSource);
+//            JasperViewer viewer = new JasperViewer(print, false);
+//            viewer.setVisible(true);
+//
+//        } catch (JRException ex) {
+//            JOptionPane.showMessageDialog(rootPane, ex);
+//        }
+//        String headerValue = jTable2.getTableHeader().toString();
+//        System.out.println(headerValue);
+//        for (int i = 0; i < jTable2.getColumnCount(); i++) {
+//            Str
+//        }
+//        try {
+//        JRDataSource dataSource = new JRTableModelDataSource(jTable2.getModel());
+//        JasperReport jasperReport = JasperCompileManager.compileReport("src/projectlimangatus/newReport.jrxml");
+//        JasperPrint print = JasperFillManager.fillReport(jasperReport, null, dataSource);
+//        JasperViewer viewer = new JasperViewer(print, false);
+//        viewer.setVisible(true);
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(rootPane, e);
+//            
+//        }
+try {
+            MessageFormat header = new MessageFormat("Query Buku");
+        MessageFormat footer = new MessageFormat("Copyright Zaid Tes");
+        jTable2.print(JTable.PrintMode.FIT_WIDTH, header, footer);
+}
+catch (Exception e) {
+
+}
+//System.out.println(jTable2.getValueAt(0, 0));
+//        try {
+//
+//            DefaultTableModel mdl = (DefaultTableModel) jTable2.getModel();
+//            Map<String, Object> params = new HashMap<>();
+//            params.put("isbn", jTable2.getValueAt(0, 0));
+//            params.put("judul_buku", jTable2.getValueAt(0, 1));
+//            params.put("tahun_terbit", jTable2.getValueAt(0, 2));
+//            params.put("penerbit", jTable2.getValueAt(0, 3));
+//            JRBeanCollectionDataSource jrbcds = new JRBeanCollectionDataSource(mdl);
+////            JRDataSource dataSource = new JRTableModelDataSource(mdl);
+//            JasperReport jasperReport = JasperCompileManager.compileReport("src/projectlimangatus/newReport.jrxml");
+//            JasperPrint jp = JasperFillManager.fillReport(jasperReport, params, new JREmptyDataSource());
+//            JasperViewer.viewReport(jp, false);
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(rootPane, e);
+//            System.out.println(e);
+//        }
+
+    }//GEN-LAST:event_jButtonQueryReportActionPerformed
 
     private void tampilanTabel() {
         // membuat tampilan model tabel
@@ -483,6 +620,7 @@ public class FormBuku extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonHapus;
+    private javax.swing.JButton jButtonQueryReport;
     private javax.swing.JButton jButtonReport;
     private javax.swing.JButton jButtonSimpan;
     private javax.swing.JButton jButtonUpdate;
