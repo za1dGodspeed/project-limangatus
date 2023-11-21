@@ -60,6 +60,9 @@ Aplikasi manajemen peminjaman buku dan skripsi untuk menghubungkan antara perpus
 ### 13/11/2023
 - Penambahan fitur pencarian berdasarkan ISBN, nama buku, tahun terbit, dan nama penerbit
 
+### 19/11/2023
+- Penambahan report berdasarkan hasil pencarian
+
 <!-- CONTACT -->
 ## Kontak
 
