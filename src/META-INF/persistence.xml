@@ -2,7 +2,18 @@
 <persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence           http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
   <persistence-unit name="ProjectLimangatusPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>projectlimangatus.Buku</class>
+    <class>dao.Buku</class>
+    <class/>
+    <class>dao.Credentials</class>
+    <class>dao.Peminjaman</class>
+    <class>dao.Kategori</class>
+    <class>dao.Dosen</class>
+    <class>dao.Pengembalian</class>
+    <class>dao.Admin</class>
+    <class>dao.Mahasiswa</class>
+    <class>dao.DetailPeminjaman</class>
+    <class>dao.DetailPengembalian</class>
+    <class>dao.Temp</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/limangatusDB"/>
       <property name="javax.persistence.jdbc.user" value="postgres"/>
