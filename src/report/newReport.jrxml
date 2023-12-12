@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="16b39547-0b0b-4926-8409-521f0ae9fabb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="dataset1" uuid="ecff4226-8945-42a8-a78e-595822db9831"/>
+	<field name="isbn" class="java.lang.String"/>
+	<field name="judul_buku" class="java.lang.String"/>
+	<field name="tahun_terbit" class="java.lang.String"/>
+	<field name="penerbit" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="35" y="2" width="100" height="20" uuid="56a5342f-1e4f-4fce-b140-afddc5641d32"/>
+				<text><![CDATA[isbn]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="2" width="100" height="20" uuid="420359d7-4ac8-4f78-8994-4834a2b4d020"/>
+				<text><![CDATA[judul_buku]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="2" width="100" height="20" uuid="69a7f66a-df8d-4878-b93a-9525d913b45b"/>
+				<text><![CDATA[tahun_terbit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="501" y="2" width="100" height="20" uuid="e8cde51e-da22-4da4-a2a9-8bd5cf25da3b"/>
+				<text><![CDATA[penerbit]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="35" y="50" width="100" height="20" uuid="01074063-5feb-427d-bd1d-6d6f8a0e2efd"/>
+				<textFieldExpression><![CDATA[$F{isbn}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="59" width="100" height="20" uuid="72882d25-1ea4-4746-9e4d-96e9ea1acf06"/>
+				<textFieldExpression><![CDATA[$F{judul_buku}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="64" width="100" height="20" uuid="3e3190d6-444c-44d7-b419-938d7c8420e9"/>
+				<textFieldExpression><![CDATA[$F{tahun_terbit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="501" y="59" width="100" height="20" uuid="205aa974-3f52-412a-af11-71ded9206ec8"/>
+				<textFieldExpression><![CDATA[$F{penerbit}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
